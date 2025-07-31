@@ -6,7 +6,7 @@ const menu = [
   { name: "Choco Shake", price: 130 }
 ];
 
-const cart = [];
+const cart = {};
 let total = 0;
 let userEmail = "";
 
@@ -25,20 +25,34 @@ function renderMenu() {
 }
 
 function addToCart(index) {
-  cart.push(menu[index]);
-  total += menu[index].price;
+  const item = menu[index];
+  if (cart[item.name]) {
+    cart[item.name].quantity += 1;
+  } else {
+    cart[item.name] = { ...item, quantity: 1 };
+  }
+  total += item.price;
   document.getElementById("total").innerText = total;
-  const li = document.createElement("li");
-  li.innerText = `${menu[index].name} - ₹${menu[index].price}`;
-  document.getElementById("cart-list").appendChild(li);
+  renderCart();
+}
+
+function renderCart() {
+  const cartList = document.getElementById("cart-list");
+  cartList.innerHTML = "";
+  for (let itemName in cart) {
+    const item = cart[itemName];
+    const li = document.createElement("li");
+    li.innerText = `${item.name} - ₹${item.price} x ${item.quantity}`;
+    cartList.appendChild(li);
+  }
 }
 
 function placeOrder() {
   const name = document.getElementById("name").value;
   const address = document.getElementById("address").value;
 
-  if (!name || !address || cart.length === 0 || !userEmail) {
-    alert("Please sign in with Google, fill all fields, and add items to cart.");
+  if (!name || !address || Object.keys(cart).length === 0 || !userEmail) {
+    alert("Please sign in, fill all fields, and add items to cart.");
     return;
   }
 
@@ -84,6 +98,30 @@ function onSignIn(response) {
   const userObject = jwt_decode(response.credential);
   userEmail = userObject.email;
   document.getElementById("user-email").innerText = `Logged in as: ${userEmail}`;
+  localStorage.setItem("userEmail", userEmail);
 }
 
-window.onload = renderMenu;
+// Manual login fallback
+function manualLogin() {
+  const name = document.getElementById("reg-name").value;
+  const email = document.getElementById("reg-email").value;
+  const password = document.getElementById("reg-password").value;
+
+  if (!name || !email || !password) {
+    alert("Please fill in all login fields.");
+    return;
+  }
+
+  userEmail = email;
+  document.getElementById("user-email").innerText = `Logged in as: ${userEmail}`;
+  localStorage.setItem("userEmail", userEmail);
+}
+
+window.onload = () => {
+  renderMenu();
+  const savedEmail = localStorage.getItem("userEmail");
+  if (savedEmail) {
+    userEmail = savedEmail;
+    document.getElementById("user-email").innerText = `Logged in as: ${userEmail}`;
+  }
+};
