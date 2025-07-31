@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Hotel Food Order</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script defer src="app.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .menu-item { border: 1px solid #ddd; margin: 10px; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Hotel Food Menu</h1>
+  <div id="menu"></div>
+  <h2>Cart</h2>
+  <ul id="cart-list"></ul>
+  <p>Total: ₹<span id="total">0</span></p>
+  <input id="name" placeholder="Your Name" required />
+  <input id="address" placeholder="Your Address" required />
+  <button onclick="placeOrder()">Place Order</button>
+</body>
+</html>
